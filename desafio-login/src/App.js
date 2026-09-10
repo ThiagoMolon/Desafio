@@ -1,4 +1,4 @@
-import './App.css';
+import './styles/main.scss';
 import Cadastro from './pages/Cadastro';
 
 function App() {

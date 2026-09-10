@@ -28,6 +28,12 @@
       border-color:$ink-faint;
     }
 
+    &:focus {
+      outline: none;
+      border-color: $everglade-light;
+      box-shadow: 0 0 0 3px rgba($everglade-light, 0.16);
+    }
+
     &:disabled {
       background: $icy-tundra;
       color:$ink-faint;
@@ -60,6 +66,11 @@
     &:hover {
       background-color: $everglade-dark;
       border-color: $everglade-dark;
+    }
+
+    &:focus-visible {
+      outline: 3px solid rgba($accent, 0.45);
+      outline-offset: 2px;
     }
 
     &:disabled {

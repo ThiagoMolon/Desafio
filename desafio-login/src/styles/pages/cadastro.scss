@@ -1,12 +1,60 @@
 .Cadastro{
+    min-height: 100vh;
+    padding: $space-6 $space-4;
+    background: linear-gradient(145deg, $icy-tundra 0%, #eef2e9 100%);
 
     &__form-card{
         width: 100%;
         max-width: 400px;
         margin: 0 auto;
-        padding: var(--space-4);
-        background-color: var(--color-white);
-        border-radius: var(--radius-md);
+        padding: $space-5;
+        background-color: $white;
+        border: 1px solid rgba($border-strong, 0.7);
+        border-radius: $radius-md;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    &__form-title {
+        color: $ink;
+        font-family: $font-display;
+        margin-bottom: $space-2;
+    }
+
+    &__form-description {
+        margin-bottom: $space-4;
+        color: $ink-soft;
+        font-family: $font-sans;
+        line-height: $line-height-snug;
+    }
+
+    [role="alert"],
+    [role="status"] {
+        margin-bottom: $space-4;
+        padding: $space-3 $space-4;
+        border-radius: $radius-sm;
+        font-family: $font-sans;
+        font-size: $font-size-xs;
+        line-height: $line-height-snug;
+        text-align: left;
+    }
+
+    [role="alert"] {
+        color: $error;
+        background-color: $error-bg;
+        border: 1px solid rgba($error, 0.25);
+    }
+
+    [role="status"] {
+        color: $success;
+        background-color: rgba($success, 0.1);
+        border: 1px solid rgba($success, 0.25);
+    }
+
+    @media (max-width: 480px) {
+        padding: $space-4 $space-3;
+
+        &__form-card {
+            padding: $space-4;
+        }
     }
 }
