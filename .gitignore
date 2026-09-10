@@ -1,5 +1,5 @@
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -69,6 +69,24 @@ web_modules/
 .env
 .env.*
 !.env.example
+
+# Local databases and secret material
+*.db
+*.sqlite
+*.sqlite3
+*.pem
+*.key
+secrets/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.example.json
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
