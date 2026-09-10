@@ -1,0 +1,71 @@
+@import "./../_reset.scss";
+@import "./../variables.scss";
+
+.form {
+  width: auto;
+  height: auto;
+  margin: $space-6 auto;
+  padding: $space-2;
+    
+  &__input {
+    width: 100%;
+    margin-bottom: $space-3;
+    font-family: $font-sans;
+    font-size: 0.9375rem;
+    color: $ink;
+    background: #fff;
+    border: 1px solid $border-strong;
+    border-radius: $radius-sm;
+    padding: 12px 14px;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+        &::placeholder {
+      color: $ink-faint;
+    }
+
+    &:hover {
+      border-color:$ink-faint;
+    }
+
+    &:disabled {
+      background: $icy-tundra;
+      color:$ink-faint;
+      cursor: not-allowed;
+    }
+  }
+
+  &__label {
+    float: left;
+    margin-bottom: $space-2;
+    font-family: $font-sans;
+    font-size: 0.875rem;
+    color: $ink-soft;
+  }
+
+  &__button {
+    width: 100%;
+    margin-top: $space-3;
+    font-family: $font-sans;
+    font-size: 0.9375rem;
+    color: #fff;
+    background-color: $everglade;
+    border-radius: $radius-sm;
+    padding: 12px 14px;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+
+    &:hover {
+      background-color: $everglade-dark;
+      border-color: $everglade-dark;
+    }
+
+    &:disabled {
+      background-color: $icy-tundra;
+      border-color: $icy-tundra;
+      cursor: not-allowed;
+    }
+  }
+}

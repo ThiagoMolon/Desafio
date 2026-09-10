@@ -1,0 +1,54 @@
+// ---- Famílias ----
+$font-display: "Fraunces", serif; // wordmark, títulos, headline
+$font-sans:
+  "Inter",
+  -apple-system,
+  BlinkMacSystemFont,
+  sans-serif; // UI, formulário, corpo
+
+// ---- Pesos ----
+// fw = font-weight
+
+$fw-regular: 450;
+$fw-semibold: 560;
+
+$fw-regular: 400;
+$fw-medium: 500;
+$fw-semibold: 600;
+
+// ---- Escala de tamanho ----
+$line-height-tight: 1.25;
+$font-size-xs: 0.75rem;
+$line-height-snug: 1.5;
+$line-height-relaxed: 1.6;
+
+// ---- Espaçamento entre letras ----
+$letter-spacing-wide: 0.01em;
+$letter-spacing-normal: 0;
+
+$icy-tundra: #f7f5ec;
+$ink: #16241f;
+$ink-soft: #57635c;
+$ink-faint: #8b958f;
+$everglade: #1f3d34;
+$everglade-dark: #1a3329;
+$everglade-light: #2c5245;
+$accent: #c08b3e;
+$error: #a8402b;
+$error-bg: #fbede9;
+$success: #2f6b4f;
+$border: #dcd7cb;
+$border-strong: #c7c1b2;
+$white: #ffffff;
+//---- Espaçamento ----
+$radius-lg: 18px;
+$radius-md: 10px;
+$radius-sm: 6px;
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 24px;
+$space-6: 32px;
+$space-7: 48px;
+$space-8: 64px;
