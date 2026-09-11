@@ -14,16 +14,16 @@ const authService = {
       return "As senhas não coincidem.";
     }
 
-    const usuarios = JSON.parse(localStorage.getItem("usuarios") || "[]");
-    const emailEmUso = usuarios.some((item) => item.email === usuario.email);
+    // const usuarios = JSON.parse(localStorage.getItem("usuarios") || "[]");
+    // const emailEmUso = usuarios.some((item) => item.email === usuario.email);
 
-    if (emailEmUso) {
-      return "Este email já está cadastrado.";
-    }
+  //   if (emailEmUso) {
+  //     return "Este email já está cadastrado.";
+  //   }
 
-    usuarios.push(usuario);
-    localStorage.setItem("usuarios", JSON.stringify(usuarios));
-    return null;
+  //   usuarios.push(usuario);
+  //   localStorage.setItem("usuarios", JSON.stringify(usuarios));
+  //   return null;
   }
 };
 

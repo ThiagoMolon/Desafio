@@ -48,35 +48,4 @@
     font-size: 0.875rem;
     color: $ink-soft;
   }
-
-  &__button {
-    width: 100%;
-    margin-top: $space-3;
-    font-family: $font-sans;
-    font-size: 0.9375rem;
-    color: #fff;
-    background-color: $everglade;
-    border-radius: $radius-sm;
-    padding: 12px 14px;
-    transition:
-      background-color 0.15s ease,
-      border-color 0.15s ease,
-      box-shadow 0.15s ease;
-
-    &:hover {
-      background-color: $everglade-dark;
-      border-color: $everglade-dark;
-    }
-
-    &:focus-visible {
-      outline: 3px solid rgba($accent, 0.45);
-      outline-offset: 2px;
-    }
-
-    &:disabled {
-      background-color: $icy-tundra;
-      border-color: $icy-tundra;
-      cursor: not-allowed;
-    }
-  }
 }

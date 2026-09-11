@@ -12,26 +12,34 @@ function Cadastro() {
   const [confirmarSenha, setConfirmarSenha] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState("");
   const [successMessage, setSuccessMessage] = React.useState("");
+  const [carregando, setCarregando] = React.useState(false);
 
-  function Cadastrar(event) {
+  async function Cadastrar(event) {
     event.preventDefault();
     setErrorMessage("");
     setSuccessMessage("");
+    setCarregando(true);
 
-    const usuario = {
-      nome,
-      email,
-      senha,
-      confirmarSenha,
-    };
-    const erro = authService.cadastrarUsuario(usuario);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 750));
 
-    if (erro) {
-      setErrorMessage(erro);
-      return;
+      const usuario = {
+        nome,
+        email,
+        senha,
+        confirmarSenha,
+      };
+      const erro = authService.cadastrarUsuario(usuario);
+
+      if (erro) {
+        setErrorMessage(erro);
+        return;
+      }
+
+      setSuccessMessage("Cadastro realizado com sucesso.");
+    } finally {
+      setCarregando(false);
     }
-
-    setSuccessMessage("Cadastro realizado com sucesso.");
   }
    
   return (
@@ -78,7 +86,9 @@ function Cadastro() {
             value={confirmarSenha}
             setState={setConfirmarSenha}
           />
-          <Button type="submit">Cadastrar</Button>
+          <Button type="submit" loading={carregando}>
+            Cadastrar
+          </Button>
         </Form>
       </div>
     </div>
