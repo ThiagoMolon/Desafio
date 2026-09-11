@@ -1,0 +1,57 @@
+.page {
+  min-height: 100vh;
+  padding: $space-7 $space-4;
+  background: linear-gradient(145deg, $icy-tundra 0%, #eef2e9 100%);
+
+  &__card {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: $space-6;
+    background: $white;
+    border: 1px solid rgba($border-strong, 0.7);
+    border-radius: $radius-md;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &__title {
+    margin-bottom: $space-3;
+    color: $ink;
+    font-family: $font-display;
+  }
+
+  &__description {
+    color: $ink-soft;
+    font-family: $font-sans;
+    line-height: $line-height-relaxed;
+  }
+
+  @media (max-width: 480px) {
+    padding: $space-4 $space-3;
+
+    &__card {
+      padding: $space-4;
+    }
+  }
+}
+
+.App > nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $space-2 $space-4;
+  padding: $space-3 $space-4;
+  background: $everglade;
+
+  a {
+    color: $white;
+    font-family: $font-sans;
+    font-size: 0.875rem;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      color: $accent;
+    }
+  }
+}

@@ -21,15 +21,13 @@ function Cadastro() {
     setCarregando(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 750));
-
       const usuario = {
         nome,
         email,
         senha,
         confirmarSenha,
       };
-      const erro = authService.cadastrarUsuario(usuario);
+      const erro = await authService.cadastrarUsuario(usuario);
 
       if (erro) {
         setErrorMessage(erro);

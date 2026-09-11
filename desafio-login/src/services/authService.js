@@ -1,6 +1,6 @@
 import { validarNome, validarEmail, validarSenha } from "../utils/validadores";
 const authService = {
-  cadastrarUsuario: (usuario) => {
+  cadastrarUsuario: async (usuario) => {
     const erroNome = validarNome(usuario.nome);
     if (erroNome) return erroNome;
 
@@ -14,16 +14,49 @@ const authService = {
       return "As senhas não coincidem.";
     }
 
-    // const usuarios = JSON.parse(localStorage.getItem("usuarios") || "[]");
-    // const emailEmUso = usuarios.some((item) => item.email === usuario.email);
+    try {
+      const response = await fetch("http://localhost:3001/usuarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome: usuario.nome,
+          email: usuario.email,
+          senha: usuario.senha,
+        }),
+      });
 
-  //   if (emailEmUso) {
-  //     return "Este email já está cadastrado.";
-  //   }
+      const data = await response.json();
 
-  //   usuarios.push(usuario);
-  //   localStorage.setItem("usuarios", JSON.stringify(usuarios));
-  //   return null;
+      if (!response.ok) {
+        return data.error || "Não foi possível cadastrar o usuário.";
+      }
+
+      return null;
+    } catch (error) {
+      return "Não foi possível conectar ao servidor.";
+    }
+  },
+
+  login: async ({ email, senha }) => {
+    if (!email || !senha) return "Email e senha são obrigatórios.";
+
+    try {
+      const response = await fetch("http://localhost:3001/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, senha }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        return data.error || "Não foi possível fazer login.";
+      }
+
+      sessionStorage.setItem("usuario", JSON.stringify(data.user));
+      return null;
+    } catch (error) {
+      return "Não foi possível conectar ao servidor.";
+    }
   }
 };
 
