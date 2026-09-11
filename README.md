@@ -1,140 +1,307 @@
-# Sistema de Login e Cadastro Seguro
+# 🔐 Sistema de Login e Cadastro Seguro
 
-Aplicação de login e cadastro com foco na proteção de credenciais e dados pessoais. O projeto separa autenticação, autorização e proteção de dados sensíveis desde o armazenamento até a apresentação ao usuário.
+Aplicação de login e cadastro com foco na **proteção de credenciais e dados pessoais**. O projeto separa autenticação, autorização e proteção de dados sensíveis desde o armazenamento até a apresentação.
 
-## Objetivos
+---
 
-- Permitir criação de contas, login, logout e gerenciamento de perfil.
-- Armazenar senhas com hash seguro, sem possibilidade de recuperação da senha original.
-- Criptografar dados pessoais que precisem ser recuperados posteriormente.
-- Manter chaves e credenciais fora do código-fonte e do banco de dados.
-- Restringir o acesso aos dados ao usuário autenticado e autorizado.
+## 📋 Índice
 
-## Arquitetura
+- [Objetivos](#objetivos)
+- [Arquitetura](#arquitetura)
+- [Dados Previstos](#dados-previstos)
+- [Fluxos Principais](#fluxos-principais)
+- [Configuração do Ambiente](#configuração-do-ambiente)
+- [Segurança](#segurança)
+- [Fases do Projeto](#fases-do-projeto)
+- [Testes de Aceitação](#testes-de-aceitação)
 
-```text
-Usuário
-	|
-	v
-Interface -> Backend -> Banco de dados
-					 |             |
-					 +-> Hash      +-> Dados pessoais criptografados
-					 |
-					 +-> Chave de criptografia fornecida pelo ambiente
+---
+
+## 🎯 Objetivos
+
+- ✅ Permitir criação de contas, login, logout e gerenciamento de perfil
+- ✅ Armazenar senhas com hash seguro, **sem possibilidade de recuperação da senha original**
+- ✅ Criptografar dados pessoais que precisem ser recuperados posteriormente
+- ✅ Manter chaves e credenciais **fora do código-fonte** e do banco de dados
+- ✅ Restringir o acesso aos dados ao usuário autenticado e autorizado
+
+---
+
+## 🏗️ Arquitetura
+
+### Fluxo Geral
+
+```
+┌─────────┐
+│ Usuário │
+└────┬────┘
+     │
+     ▼
+┌───────────────┐
+│  Interface    │
+└────┬──────────┘
+     │
+     ▼
+┌───────────────────────────────────────┐
+│          Backend                      │
+│  ┌─────────────────────────────────┐  │
+│  │ • Hash de senhas                │  │
+│  │ • Validações                    │  │
+│  │ • Lógica de sessão              │  │
+│  └─────────────────────────────────┘  │
+└────┬──────────────────────────────────┘
+     │
+     ▼
+┌──────────────────────────────────────────┐
+│      Banco de Dados                      │
+│  ┌────────────────────────────────────┐  │
+│  │ • Senhas (hash)                    │  │
+│  │ • Dados pessoais (criptografados)  │  │
+│  └────────────────────────────────────┘  │
+└──────────────────────────────────────────┘
+
+🔑 Chave de criptografia: Ambiente (não no código)
 ```
 
 ### Autenticação
 
-Senhas não são criptografadas para serem descriptografadas. O fluxo correto é:
+Senhas **NÃO são criptografadas** para serem descriptografadas. O fluxo correto é:
 
-```text
-Senha informada -> Hash seguro -> Banco de dados
+```
+Senha informada ──► Hash seguro ──► Banco de dados
+                        ▲
+                        │
+                   Verificação (login)
 ```
 
-Durante o login, a senha informada é verificada contra o hash armazenado. Após a validação, a aplicação cria uma sessão segura.
+**Durante o login:** A senha informada é verificada contra o hash armazenado via comparação segura. Após validação, cria-se uma sessão segura.
 
-### Dados pessoais
+### Dados Pessoais
 
-Informações que precisam ser recuperadas, como CPF, telefone e endereço, podem usar criptografia reversível:
+Informações que precisam ser recuperadas (CPF, telefone, endereço) usam criptografia reversível:
 
-```text
-Dado pessoal -> Criptografia -> Banco de dados
-Banco de dados -> Descriptografia autorizada -> Aplicação
+```
+Dado pessoal ──► Criptografia ──► Banco de dados
+                                        │
+                                        ▼
+                          Descriptografia autorizada
+                                        │
+                                        ▼
+                                   Aplicação
 ```
 
-A descriptografia deve ocorrer somente quando for necessária, por exemplo, na visualização ou edição do perfil.
+**Princípio:** Descriptografar apenas quando necessário (visualização, edição do perfil).
 
-## Dados previstos
+---
 
-| Campo | Tratamento |
-| --- | --- |
-| ID do usuário | Armazenamento normal |
-| Nome | Avaliar conforme a necessidade de busca e exibição |
-| E-mail | Armazenamento pesquisável para login, com proteção adequada |
-| Senha | Hash seguro |
-| CPF, telefone e endereço | Criptografia reversível |
-| Data de cadastro e alteração | Armazenamento normal |
+## 📊 Dados Previstos
 
-O e-mail precisa continuar pesquisável para o login. A implementação deve avaliar uma representação normalizada ou um índice pesquisável, evitando expor dados além do necessário.
+| Campo | Tratamento | Notas |
+|-------|-----------|-------|
+| **ID do usuário** | Armazenamento normal | Identificador único |
+| **Nome** | Avaliar conforme necessidade | Busca e exibição |
+| **E-mail** | Pesquisável + protegido | Essencial para login |
+| **Senha** | Hash seguro | Nunca armazenar em texto puro |
+| **CPF, telefone, endereço** | Criptografia reversível | Dados sensíveis |
+| **Data de cadastro/alteração** | Armazenamento normal | Auditoria |
 
-## Fluxos principais
+**⚠️ Consideração importante:** O e-mail deve permanecer pesquisável para login. Avaliar uso de representação normalizada ou índice pesquisável sem expor dados além do necessário.
+
+---
+
+## 🔄 Fluxos Principais
 
 ### Cadastro
 
-1. Validar campos obrigatórios, e-mail, senha e dados pessoais.
-2. Confirmar que o e-mail ainda não está cadastrado.
-3. Gerar o hash da senha com um algoritmo apropriado para senhas.
-4. Criptografar os dados pessoais usando a chave do ambiente.
-5. Persistir os dados no banco.
+```
+1️⃣  Validar campos obrigatórios (e-mail, senha, dados pessoais)
+2️⃣  Confirmar que o e-mail ainda não está cadastrado
+3️⃣  Gerar hash da senha com algoritmo apropriado (bcrypt, Argon2, etc)
+4️⃣  Criptografar dados pessoais usando chave do ambiente
+5️⃣  Persistir dados no banco
+```
 
 ### Login
 
-1. Receber e-mail e senha.
-2. Localizar o usuário sem descriptografar seus dados pessoais.
-3. Verificar a senha contra o hash armazenado.
-4. Criar uma sessão segura após a autenticação.
+```
+1️⃣  Receber e-mail e senha
+2️⃣  Localizar usuário SEM descriptografar dados pessoais
+3️⃣  Verificar senha contra hash armazenado
+4️⃣  Criar sessão segura após autenticação
+```
 
 ### Perfil
 
-1. Confirmar autenticação e autorização do usuário.
-2. Consultar apenas o próprio registro.
-3. Descriptografar somente os campos necessários para exibição.
-4. Validar e criptografar novamente apenas os campos alterados.
-
-### Recuperação de senha
-
-O sistema deve usar um mecanismo temporário de recuperação. A nova senha substitui o hash anterior; a senha antiga nunca deve ser enviada ou armazenada de forma recuperável.
-
-## Configuração do ambiente
-
-Segredos, como a chave de criptografia e as credenciais do banco, devem ser fornecidos por variáveis de ambiente.
-
-Crie um arquivo `.env` local a partir do exemplo:
-
-```bash
-cp .env.example .env
+```
+1️⃣  Confirmar autenticação e autorização do usuário
+2️⃣  Consultar apenas o próprio registro
+3️⃣  Descriptografar somente campos necessários para exibição
+4️⃣  Validar e criptografar novamente apenas campos alterados
 ```
 
-O arquivo `.env` não deve ser versionado. O `.env.example` deve conter somente os nomes das variáveis necessárias, sem valores reais. A chave de criptografia também não deve ser enviada ao frontend, registrada em logs ou armazenada junto aos dados criptografados.
+### Recuperação de Senha
 
-## Segurança
+```
+1️⃣  Gerar token temporário (válido por tempo limitado)
+2️⃣  Enviar link para reset via e-mail
+3️⃣  Nova senha substitui o hash anterior
+4️⃣  Senha antiga NUNCA é enviada ou armazenada de forma recuperável
+```
 
-O projeto deve considerar:
+---
 
-- consultas parametrizadas ou ORM para evitar SQL injection;
-- validação de entrada no backend;
-- mensagens de erro que não revelem se um e-mail está cadastrado;
-- limitação de tentativas e proteção contra brute force;
-- cookies de sessão com `HttpOnly`, `Secure` e política `SameSite` adequada;
-- expiração, renovação e invalidação de sessões no logout;
-- proteção contra XSS e CSRF quando aplicável;
-- HTTPS em qualquer ambiente que transporte dados reais;
-- logs de eventos sem senhas, chaves ou dados pessoais desnecessários.
+## ⚙️ Configuração do Ambiente
 
-HTTPS protege os dados durante o transporte; a criptografia de campos protege dados armazenados; o hash protege as senhas. São camadas diferentes e complementares.
+Segredos devem ser fornecidos por **variáveis de ambiente**, nunca no código.
 
-## Fases do projeto
+### Setup Inicial
 
-1. Definir funcionalidades, dados e campos protegidos.
-2. Escolher frontend, backend, banco e mecanismo de sessão.
-3. Criar o modelo de usuários e as migrações.
-4. Configurar variáveis de ambiente e segredos.
-5. Implementar cadastro, login, logout e perfil.
-6. Adicionar recuperação de senha e controles de segurança.
-7. Criar testes funcionais, de criptografia e de autorização.
-8. Preparar deploy, banco, HTTPS e variáveis de produção.
+```bash
+# Copiar arquivo de exemplo
+cp .env.example .env
 
-## Testes de aceitação
+# Editar .env com valores locais
+nano .env
+```
 
-- Cadastro, login e logout funcionam corretamente.
-- Senhas não aparecem em texto puro no banco ou nos logs.
-- Dados pessoais não aparecem em texto puro no banco.
-- Dados criptografados são recuperados apenas com a chave correta.
-- Usuários não conseguem acessar o perfil de outra pessoa.
-- Rotas privadas rejeitam requisições sem autenticação.
-- Tentativas repetidas de login são limitadas.
-- Entradas inválidas e tentativas de injeção são tratadas com segurança.
+### Arquivo `.env.example`
 
-## Regra de ouro
+```env
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/secure_login
 
-**Senha é armazenada com hash e nunca deve ser descriptografada. Dados pessoais que precisam ser recuperados podem ser criptografados. A chave deve permanecer fora do código, do frontend e do banco de dados.**
+# Encryption
+ENCRYPTION_KEY=your-base64-encoded-key-here
+ENCRYPTION_ALGORITHM=aes-256-gcm
+
+# Session
+SESSION_SECRET=your-session-secret-here
+SESSION_MAX_AGE=86400
+
+# Email (para recuperação de senha)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+
+# App
+NODE_ENV=development
+APP_URL=http://localhost:3000
+```
+
+**✅ Boas práticas:**
+- `.env` não deve ser versionado (adicionar ao `.gitignore`)
+- `.env.example` contém apenas nomes de variáveis, sem valores reais
+- Chave de criptografia NUNCA deve ser enviada ao frontend
+
+---
+
+## 🔒 Segurança
+
+O projeto deve implementar todas as camadas de proteção:
+
+### Backend
+
+- ✅ Consultas parametrizadas ou ORM para evitar **SQL injection**
+- ✅ Validação rigorosa de entrada no backend
+- ✅ Mensagens de erro que **não revelam** se um e-mail está cadastrado
+- ✅ Rate limiting e proteção contra **brute force**
+- ✅ Logs de eventos **sem senhas, chaves ou dados sensíveis**
+
+### Sessão
+
+- ✅ Cookies com flags `HttpOnly`, `Secure`, `SameSite=Strict`
+- ✅ Expiração automática de sessões
+- ✅ Invalidação de sessão ao logout
+- ✅ Renovação de sessão em operações sensíveis
+
+### Transporte & Armazenamento
+
+- ✅ HTTPS em **qualquer ambiente** que transporte dados reais
+- ✅ Hash para proteção de senhas (não criptografia)
+- ✅ Criptografia para dados pessoais que precisam ser recuperados
+
+### Proteção do Frontend
+
+- ✅ Proteção contra **XSS** (sanitização, CSP)
+- ✅ Proteção contra **CSRF** (tokens, SameSite cookies)
+- ✅ Nunca armazenar senhas em localStorage/sessionStorage
+
+### Defesa em Camadas
+
+```
+🌐 HTTPS (transporte)
+     ▼
+🔐 Criptografia de campos (armazenamento)
+     ▼
+#️⃣  Hash de senhas (irreversível)
+```
+
+Estas são **camadas diferentes e complementares**.
+
+---
+
+## 📅 Fases do Projeto
+
+- [ ] **Fase 1:** Definir funcionalidades, dados e campos protegidos
+- [ ] **Fase 2:** Escolher stack (frontend, backend, banco, sessão)
+- [ ] **Fase 3:** Criar modelo de usuários e migrações
+- [ ] **Fase 4:** Configurar variáveis de ambiente e segredos
+- [ ] **Fase 5:** Implementar cadastro, login, logout e perfil
+- [ ] **Fase 6:** Adicionar recuperação de senha e controles de segurança
+- [ ] **Fase 7:** Criar testes (funcionais, criptografia, autorização)
+- [ ] **Fase 8:** Preparar deploy (banco, HTTPS, variáveis de produção)
+
+---
+
+## ✅ Testes de Aceitação
+
+### Funcionalidades
+
+- [ ] Cadastro, login e logout funcionam corretamente
+- [ ] Usuário consegue editar seu próprio perfil
+- [ ] Recuperação de senha funciona via e-mail
+
+### Segurança de Dados
+
+- [ ] Senhas não aparecem em texto puro no banco
+- [ ] Senhas não aparecem nos logs do sistema
+- [ ] Dados pessoais não aparecem em texto puro no banco
+- [ ] Dados criptografados são recuperados apenas com a chave correta
+
+### Controle de Acesso
+
+- [ ] Usuários não conseguem acessar o perfil de outra pessoa
+- [ ] Rotas privadas rejeitam requisições sem autenticação
+- [ ] Sessão é invalidada corretamente no logout
+
+### Proteção contra Ataques
+
+- [ ] Tentativas repetidas de login são limitadas
+- [ ] Entradas inválidas são tratadas com segurança
+- [ ] Tentativas de SQL injection são bloqueadas
+- [ ] Mensagens de erro não revelam informações sensíveis
+
+---
+
+## 🎯 Regra de Ouro
+
+> **Senha é armazenada com hash e NUNCA deve ser descriptografada.**
+> 
+> **Dados pessoais que precisam ser recuperados PODEM ser criptografados.**
+> 
+> **A chave deve permanecer fora do código, do frontend e do banco.**
+
+---
+
+## 📚 Referências Recomendadas
+
+- [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)
+- [OWASP Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)
+- [NIST Digital Identity Guidelines](https://pages.nist.gov/800-63-3/)
+- Bcrypt/Argon2 para hash de senhas
+- AES-256-GCM para criptografia de dados
+
+---
+
+**Última atualização:** 2026-09-11 | **Status:** 📋 Em Planejamento
