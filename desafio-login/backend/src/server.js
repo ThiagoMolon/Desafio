@@ -23,6 +23,24 @@ app.get("/health", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend rodando em http://localhost:${PORT}`);
+async function startServer() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+      token_hash CHAR(64) NOT NULL,
+      expires_at TIMESTAMP NOT NULL,
+      used_at TIMESTAMP,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  app.listen(PORT, () => {
+    console.log(`Backend rodando em http://localhost:${PORT}`);
+  });
+}
+
+startServer().catch((error) => {
+  console.error("Não foi possível iniciar o backend:", error);
+  process.exit(1);
 });

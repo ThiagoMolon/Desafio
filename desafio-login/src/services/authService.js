@@ -57,6 +57,38 @@ const authService = {
     } catch (error) {
       return "Não foi possível conectar ao servidor.";
     }
+  },
+
+  solicitarRecuperacao: async (email) => {
+    try {
+      const response = await fetch("http://localhost:3001/recuperar-senha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) return data.error || "Não foi possível enviar o código.";
+      return null;
+    } catch (error) {
+      return "Não foi possível conectar ao servidor.";
+    }
+  },
+
+  redefinirSenha: async ({ email, code, novaSenha }) => {
+    try {
+      const response = await fetch("http://localhost:3001/redefinir-senha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code, novaSenha }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) return data.error || "Não foi possível redefinir a senha.";
+      return null;
+    } catch (error) {
+      return "Não foi possível conectar ao servidor.";
+    }
   }
 };
 
